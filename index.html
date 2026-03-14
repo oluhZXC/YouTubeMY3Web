@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YouTube — Material You</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FF0000'/%3E%3Cpath d='M22 16l-9 5.2V10.8z' fill='white'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Google+Sans+Display:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FF0000'/%3E%3Cpath d='M22 16l-9 5.2V10.8z' fill='white'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 <style>
   :root {
@@ -120,8 +122,9 @@
     background: var(--md-primary-container);
     color: var(--md-on-primary-container);
     display:flex;align-items:center;justify-content:center;
-    font-size:14px;font-weight:600;cursor:pointer;
+    font-size:11px;font-weight:600;cursor:pointer;
     font-family:'Google Sans',sans-serif;
+    white-space:nowrap;
   }
 
   /* ─── LAYOUT ─── */
@@ -296,6 +299,20 @@
     box-shadow: var(--elevation-3); position:relative;
   }
   #yt-player { width:100%; height:100%; border:none; display:block; }
+  .player-fallback {
+    display:none; position:absolute; inset:0;
+    background:#111; align-items:center; justify-content:center;
+    flex-direction:column; gap:16px; color:#fff; text-align:center; padding:24px;
+  }
+  .player-fallback.show { display:flex; }
+  .watch-btn {
+    padding:12px 28px; border-radius:50px;
+    background:#FF0000; color:#fff; border:none;
+    font-size:15px; font-weight:600; cursor:pointer;
+    font-family:"Google Sans",sans-serif; text-decoration:none;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .watch-btn:hover { background:#cc0000; }
   .player-title {
     font-size:20px;font-weight:700;
     font-family:'Google Sans Display',sans-serif;
@@ -573,6 +590,113 @@
   }
 
   /* ─── FAB ─── */
+
+  /* ─── ACCOUNT / LOGIN ─── */
+  .account-menu {
+    position:absolute; top:52px; right:16px; z-index:300;
+    background:var(--md-surface); border-radius:var(--radius-xl);
+    box-shadow: var(--elevation-3);
+    border:1px solid var(--md-outline-variant);
+    min-width:280px; overflow:hidden;
+    animation: dialogIn .2s ease;
+    display:none;
+  }
+  .account-menu.open { display:block; }
+  .account-header {
+    padding:20px; display:flex; gap:14px; align-items:center;
+    background: linear-gradient(135deg, var(--md-primary-container), var(--md-secondary-container));
+  }
+  .account-big-avatar {
+    width:52px; height:52px; border-radius:50%;
+    background:var(--md-primary); color:var(--md-on-primary);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; font-weight:700; font-family:"Google Sans",sans-serif;
+    flex-shrink:0; overflow:hidden; border:2px solid var(--md-on-primary-container);
+  }
+  .account-big-avatar img { width:100%;height:100%;object-fit:cover; }
+  .account-name { font-size:15px;font-weight:600;font-family:"Google Sans",sans-serif; color:var(--md-on-primary-container); }
+  .account-email { font-size:12px; color:var(--md-on-surface-variant); margin-top:2px; }
+  .account-menu-item {
+    display:flex; align-items:center; gap:14px;
+    padding:12px 20px; cursor:pointer;
+    transition:background .15s; color:var(--md-on-surface);
+    font-size:14px; font-family:"Google Sans",sans-serif;
+  }
+  .account-menu-item:hover { background:var(--md-surface-variant); }
+  .account-menu-item .material-icons-round { font-size:20px; color:var(--md-on-surface-variant); }
+  .account-menu-divider { height:1px; background:var(--md-outline-variant); margin:4px 0; }
+
+  .login-dialog-scrim { display:none;position:fixed;inset:0;background:var(--md-scrim);z-index:400;align-items:center;justify-content:center; }
+  .login-dialog-scrim.open { display:flex; }
+  .login-dialog {
+    background:var(--md-surface); border-radius:var(--radius-xl);
+    padding:0; width:360px; max-width:92%;
+    box-shadow:0 8px 32px rgba(0,0,0,.25);
+    animation: dialogIn .25s ease; overflow:hidden;
+  }
+  .login-header {
+    padding:32px 32px 24px;
+    background: linear-gradient(135deg, var(--md-primary-container) 0%, var(--md-secondary-container) 100%);
+    text-align:center;
+  }
+  .login-logo {
+    width:56px;height:56px;border-radius:50%;
+    background:var(--md-primary); margin:0 auto 12px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .login-logo svg { width:28px;height:28px; }
+  .login-header h2 { font-size:22px;font-weight:700;font-family:"Google Sans Display",sans-serif;color:var(--md-on-primary-container); }
+  .login-header p { font-size:13px;color:var(--md-on-surface-variant);margin-top:4px; }
+  .login-body { padding:24px 32px 32px; }
+  .login-field {
+    margin-bottom:16px;
+  }
+  .login-field label { font-size:12px;font-weight:500;color:var(--md-on-surface-variant);display:block;margin-bottom:6px;font-family:"Google Sans",sans-serif;letter-spacing:.3px; }
+  .login-input {
+    width:100%;padding:12px 16px;border-radius:var(--radius-md);
+    border:1.5px solid var(--md-outline-variant);
+    background:var(--md-surface-variant);
+    color:var(--md-on-surface);font-size:15px;
+    font-family:"Google Sans",sans-serif;outline:none;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .login-input:focus {
+    border-color:var(--md-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb,var(--md-primary) 15%,transparent);
+  }
+  .login-btn {
+    width:100%;padding:14px;border-radius:var(--radius-full);
+    border:none;background:var(--md-primary);color:var(--md-on-primary);
+    font-size:15px;font-weight:600;cursor:pointer;
+    font-family:"Google Sans",sans-serif;transition:all .2s;
+    margin-top:8px;
+  }
+  .login-btn:hover { background:color-mix(in srgb,#000 10%,var(--md-primary)); transform:translateY(-1px); }
+  .login-divider { display:flex;align-items:center;gap:12px;margin:20px 0; }
+  .login-divider::before,.login-divider::after { content:'';flex:1;height:1px;background:var(--md-outline-variant); }
+  .login-divider span { font-size:12px;color:var(--md-on-surface-variant);font-family:"Google Sans",sans-serif; }
+  .google-btn {
+    width:100%;padding:12px 16px;border-radius:var(--radius-full);
+    border:1.5px solid var(--md-outline-variant);
+    background:var(--md-surface);color:var(--md-on-surface);
+    font-size:14px;font-weight:500;cursor:pointer;
+    font-family:"Google Sans",sans-serif;transition:all .2s;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+  }
+  .google-btn:hover { background:var(--md-surface-variant);border-color:var(--md-primary); }
+  .google-btn svg { width:18px;height:18px;flex-shrink:0; }
+  .login-footer { font-size:12px;color:var(--md-on-surface-variant);text-align:center;margin-top:16px;line-height:1.5; }
+  .login-link { color:var(--md-primary);cursor:pointer;text-decoration:none; }
+  .login-link:hover { text-decoration:underline; }
+
+  .avatar.logged-in { background:var(--md-primary);cursor:pointer;font-weight:700; }
+  .user-badge {
+    position:absolute;top:-2px;right:-2px;
+    width:10px;height:10px;border-radius:50%;
+    background:#4CAF50;border:2px solid var(--md-surface);
+  }
+  .avatar-wrap { position:relative;display:inline-flex; }
+
   .fab {
     position:fixed;bottom:24px;right:24px;z-index:90;
     width:56px;height:56px;border-radius:var(--radius-md);
@@ -619,7 +743,9 @@
     <button class="btn-icon" id="settingsBtn" title="Настройки">
       <span class="material-icons-round">settings</span>
     </button>
-    <div class="avatar" title="Аккаунт">Я</div>
+    <div class="avatar-wrap" id="avatarWrap">
+    <div class="avatar" id="topAvatar" title="Аккаунт" onclick="toggleAccountMenu()">Войти</div>
+  </div>
   </div>
 </header>
 
@@ -725,7 +851,18 @@
     <div class="player-page" id="playerPage">
       <div class="player-main">
         <div class="video-player-wrap">
-          <iframe id="yt-player" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+          <iframe id="yt-player" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"></iframe>
+          <div class="player-fallback" id="playerFallback">
+            <span class="material-icons-round" style="font-size:48px;opacity:.6">play_circle</span>
+            <div style="font-size:14px;opacity:.7;max-width:280px;line-height:1.5">
+              YouTube блокирует встроенный плеер при открытии через file://.<br>
+              Для полного воспроизведения запустите сайт через локальный сервер.
+            </div>
+            <a id="watchOnYT" href="#" target="_blank" class="watch-btn">
+              <span class="material-icons-round" style="font-size:18px">play_arrow</span>
+              Смотреть на YouTube
+            </a>
+          </div>
         </div>
         <h1 class="player-title" id="playerTitle">Загрузка...</h1>
         <div class="player-meta-row">
@@ -785,6 +922,74 @@
   </main>
 </div>
 
+
+<!-- ACCOUNT MENU -->
+<div class="account-menu" id="accountMenu">
+  <div class="account-header" id="accountHeader" style="display:none">
+    <div class="account-big-avatar" id="bigAvatar">?</div>
+    <div>
+      <div class="account-name" id="accountName">Пользователь</div>
+      <div class="account-email" id="accountEmail">user@gmail.com</div>
+    </div>
+  </div>
+  <div id="menuNotLogged" style="padding:16px 20px;text-align:center">
+    <div style="font-size:14px;color:var(--md-on-surface-variant);margin-bottom:12px;font-family:'Google Sans',sans-serif;">Войдите, чтобы ставить лайки,<br>комментировать и подписываться</div>
+    <button class="filled-btn" onclick="openLogin();closeAccountMenu();" style="width:100%">Войти в аккаунт</button>
+  </div>
+  <div id="menuLogged" style="display:none">
+    <div class="account-menu-item" onclick="navigate('liked');closeAccountMenu()">
+      <span class="material-icons-round">thumb_up</span> Понравившиеся
+    </div>
+    <div class="account-menu-item" onclick="navigate('history');closeAccountMenu()">
+      <span class="material-icons-round">history</span> История просмотров
+    </div>
+    <div class="account-menu-item" onclick="navigate('saved');closeAccountMenu()">
+      <span class="material-icons-round">watch_later</span> Смотреть позже
+    </div>
+    <div class="account-menu-divider"></div>
+    <div class="account-menu-item" onclick="openSettings();closeAccountMenu()">
+      <span class="material-icons-round">settings</span> Настройки
+    </div>
+    <div class="account-menu-item" onclick="logOut()">
+      <span class="material-icons-round">logout</span> Выйти
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN DIALOG -->
+<div class="login-dialog-scrim" id="loginDialog" onclick="handleLoginScrim(event)">
+  <div class="login-dialog">
+    <div class="login-header">
+      <div class="login-logo">
+        <svg viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="14" fill="#FF0000"/><path d="M19 14l-7.5 4.33V9.67z" fill="white"/></svg>
+      </div>
+      <h2>Войти в YouTube</h2>
+      <p>Используйте свой аккаунт Google</p>
+    </div>
+    <div class="login-body">
+      <div id="loginForm">
+        <div class="login-field">
+          <label>ИМЯ ПОЛЬЗОВАТЕЛЯ</label>
+          <input class="login-input" id="loginName" placeholder="Введите ваше имя" autocomplete="off">
+        </div>
+        <div class="login-field">
+          <label>EMAIL</label>
+          <input class="login-input" id="loginEmail" type="email" placeholder="example@gmail.com" autocomplete="off">
+        </div>
+        <button class="login-btn" onclick="doLogin()">Войти</button>
+        <div class="login-divider"><span>или</span></div>
+        <button class="google-btn" onclick="doGoogleLogin()">
+          <svg viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
+          Продолжить с Google
+        </button>
+      </div>
+      <div class="login-footer">
+        Продолжая, вы соглашаетесь с <a class="login-link" href="#">Условиями использования</a> и <a class="login-link" href="#">Политикой конфиденциальности</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- SETTINGS DIALOG -->
 <div class="dialog-scrim" id="settingsDialog">
   <div class="dialog">
@@ -826,7 +1031,7 @@
 // ══════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════
-let API_KEY = localStorage.getItem('yt_api_key') || '';
+let API_KEY = localStorage.getItem('yt_api_key') || 'AIzaSyA6L4uTC8XFHi9VULyVxZCajK8Z4lVaGnI';
 let currentPage = 'home';
 let currentVideoId = null;
 let subscribed = false;
@@ -1010,8 +1215,20 @@ function renderVideoCard(item, detail) {
 async function playVideo(videoId) {
   currentVideoId = videoId;
   showPage('player');
+  // Update fallback link
+  document.getElementById('watchOnYT').href = `https://www.youtube.com/watch?v=${videoId}`;
+  document.getElementById('playerFallback').classList.remove('show');
+  document.getElementById('yt-player').style.display = 'block';
+
+  // Listen for iframe error (file:// restriction)
+  const iframe = document.getElementById('yt-player');
+  iframe.onerror = () => {
+    document.getElementById('playerFallback').classList.add('show');
+    iframe.style.display = 'none';
+  };
+
   document.getElementById('yt-player').src =
-    `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+    `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&origin=null&enablejsapi=1`;
   document.getElementById('playerTitle').textContent = 'Загрузка...';
   document.getElementById('playerMeta').textContent = '';
   document.getElementById('playerDesc').textContent = '';
@@ -1438,6 +1655,107 @@ if (savedTheme) {
   document.getElementById('themeBtn').querySelector('.material-icons-round').textContent =
     savedTheme === 'dark' ? 'light_mode' : 'dark_mode';
 }
+
+
+// ══════════════════════════════════════════════
+//  ACCOUNT
+// ══════════════════════════════════════════════
+let currentUser = JSON.parse(localStorage.getItem('yt_user') || 'null');
+
+function initAccount() {
+  if (currentUser) updateUI(currentUser);
+}
+
+function toggleAccountMenu() {
+  const menu = document.getElementById('accountMenu');
+  menu.classList.toggle('open');
+}
+function closeAccountMenu() {
+  document.getElementById('accountMenu').classList.remove('open');
+}
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('avatarWrap');
+  const menu = document.getElementById('accountMenu');
+  if (wrap && !wrap.contains(e.target) && !menu.contains(e.target)) {
+    closeAccountMenu();
+  }
+});
+
+function openLogin() {
+  document.getElementById('loginDialog').classList.add('open');
+  setTimeout(() => document.getElementById('loginName').focus(), 200);
+}
+function handleLoginScrim(e) {
+  if (e.target === document.getElementById('loginDialog')) {
+    document.getElementById('loginDialog').classList.remove('open');
+  }
+}
+
+function doLogin() {
+  const name = document.getElementById('loginName').value.trim();
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!name) { showSnack('Введите имя'); return; }
+  const user = { name, email: email || name + '@gmail.com', initials: name.slice(0,2).toUpperCase() };
+  saveUser(user);
+}
+
+function doGoogleLogin() {
+  const names = ['Алексей К.','Мария В.','Дмитрий П.','Анна С.'];
+  const name = names[Math.floor(Math.random()*names.length)];
+  const user = { name, email: name.toLowerCase().replace(/[^a-zа-я]/gi,'').slice(0,8) + '@gmail.com', initials: name.slice(0,2).toUpperCase() };
+  saveUser(user);
+}
+
+function saveUser(user) {
+  currentUser = user;
+  localStorage.setItem('yt_user', JSON.stringify(user));
+  document.getElementById('loginDialog').classList.remove('open');
+  updateUI(user);
+  showSnack('Добро пожаловать, ' + user.name + '! 👋');
+}
+
+function updateUI(user) {
+  const avatar = document.getElementById('topAvatar');
+  avatar.textContent = user.initials;
+  avatar.classList.add('logged-in');
+  avatar.title = user.name;
+  // Add green dot
+  const wrap = document.getElementById('avatarWrap');
+  if (!wrap.querySelector('.user-badge')) {
+    const badge = document.createElement('div');
+    badge.className = 'user-badge';
+    wrap.appendChild(badge);
+  }
+  // Update menu
+  document.getElementById('accountHeader').style.display = 'flex';
+  document.getElementById('menuNotLogged').style.display = 'none';
+  document.getElementById('menuLogged').style.display = 'block';
+  document.getElementById('bigAvatar').textContent = user.initials;
+  document.getElementById('accountName').textContent = user.name;
+  document.getElementById('accountEmail').textContent = user.email;
+  // Update comment avatars
+  document.querySelectorAll('.avatar').forEach(a => {
+    if (a.textContent === 'Я') a.textContent = user.initials;
+  });
+}
+
+function logOut() {
+  currentUser = null;
+  localStorage.removeItem('yt_user');
+  const avatar = document.getElementById('topAvatar');
+  avatar.textContent = 'Войти';
+  avatar.classList.remove('logged-in');
+  const badge = document.getElementById('avatarWrap').querySelector('.user-badge');
+  if (badge) badge.remove();
+  document.getElementById('accountHeader').style.display = 'none';
+  document.getElementById('menuNotLogged').style.display = 'block';
+  document.getElementById('menuLogged').style.display = 'none';
+  closeAccountMenu();
+  showSnack('Вы вышли из аккаунта');
+}
+
+// Init on load
+initAccount();
 
 // ══════════════════════════════════════════════
 //  UTILS
